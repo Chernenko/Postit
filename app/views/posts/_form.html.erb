@@ -14,17 +14,14 @@
         <%= f.text_area :description%>
       </div>
       <div class = 'control-group'>
-
-
-
-
         <%= f.label 'Categories' %>
         <%= f.collection_check_boxes :category_ids, Category.all, :id, :name do |c| %>
             <% c.label(class: 'checkbox inline') {c.check_box(class: 'checkbox') + c.text} %>
         <%end%>
       </div>
-
-      <%= f.submit(@post.new_record? ? 'Create Post' :  'Update Post', class:  'btn btn-primary') %>
-      <br/>
+      <% if logged_in? %>
+          <%= f.submit(@post.new_record? ? 'Create Post' :  'Update Post', class:  'btn btn-primary') %>
+          <br/>
+      <% end %>
+      </div>
   <% end %>
-</div>
