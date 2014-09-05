@@ -25,12 +25,13 @@
       </div>
     </div>
 <%end%>
-<% if @post.comments.size >= 1 %>
+<% if @post.comments.size ==0 %>
+    NO COMMENTS YET
+
+<%else%>
     <h5>Comments:</h5>
     <% @post.comments.each do |comment|%>
         <%= render 'comments/comment', comment:comment%>
     <%end%>
-<%else%>
-    NO COMMENTS YET
 <%end%>
 
