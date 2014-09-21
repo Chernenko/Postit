@@ -9,7 +9,6 @@
 <ul class='nav nav-tabs'>
   <li class= '<%= 'active' if params[:tab].nil? %>'>
     <%= link_to "Posts (#{@user.posts.size}) ", user_path(@user) %>
-
   </li>
 
   <li class='<%= 'active' if params[:tab]=='comments'%>'>
@@ -22,10 +21,10 @@
     <% end%>
 <% elsif params[:tab] == 'comments' %>
 
-        <% @user.comments.each do |comment|  %>
-            <%= render 'comments/comment', comment:comment, show_post: true %>
-        <% end %>
+    <% @user.comments.each do |comment|  %>
+        <%= render 'comments/comment', comment:comment, show_post: true %>
     <% end %>
+<% end %>
 
 
 

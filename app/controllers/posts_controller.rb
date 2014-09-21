@@ -18,7 +18,7 @@ class PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
-   @post.creator = current_user
+    @post.creator = current_user
     if @post.save
       flash[:notice]="The new post was created."
       redirect_to posts_path
@@ -30,7 +30,6 @@ class PostsController < ApplicationController
   def edit; end
 
   def update
-
     if @post.update(post_params)
       flash[:notice]= "This post was updated."
       redirect_to post_path(@post)
@@ -41,35 +40,29 @@ class PostsController < ApplicationController
 
   def post_params
     params.require(:post).permit(:title, :url, :description, category_ids:[])
-
   end
 
   def set_post
     @post = Post.find_by slug: params[:id]
-
   end
 
   def vote
     @post = Post.find_by slug: params[:id]
     @vote = Vote.create(voteable: @post, creator: current_user, vote:params[:vote] )
     respond_to do|format|
-    format.html do
-      if !@vote.errors.any?
-        flash[:notice]= "You vote was counted."
-      else
-        flash[:notice]= "You can vote on a post once."
+      format.html do
+        if !@vote.errors.any?
+          flash[:notice]= "You vote was counted."
+        else
+          flash[:notice]= "You can vote on a post once."
+        end
+        redirect_to  :back
       end
-      redirect_to  :back
-    end
-    format.js
+      format.js
     end
   end
+
   def require_creator
     access_denied unless logged_in? and (current_user == @post.creator || current_user.admin?)
-
   end
-
-
 end
-
-

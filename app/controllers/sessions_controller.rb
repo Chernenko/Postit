@@ -1,26 +1,50 @@
 class SessionsController < ApplicationController
-  def new #displayng form
-
-  end
+  def new;end #displayng form
 
   def create
     user = User.where(username: params[:username]).first # .first-  because where returning array
 # user = User.find_by(username: params["username"])
-
     if user && user.authenticate(params[:password])
-      session[:user_id]= user.id
-      flash[:notice]="welcome, you've logged in."
-      redirect_to root_path
+      if user.two_factor_auth?
+        session[:two_factor] = true
+        user.generate_pin!
+        user.send_pin_to_twilio
+        redirect_to pin_path
+      else
+        login_user!(user)
+      end
     else
       flash[:error] = "There is something wrong with you username or password."
-      # if we want to use render :new , use flash,new ,
       redirect_to login_path
     end
   end
 
   def destroy
-    session[:user_id]=nil
+    session[:user_id] = nil
     flash[:notice] = "You've logged out."
+    redirect_to root_path
+  end
+
+  def pin
+    access_denied if session[:two_factor].nil?
+    if request.post?
+      user = User.find_by pin: params[:pin]
+      if user
+        session[:two_factor] = nil
+        user.remove_pin!
+        login_user!(user)
+      else
+        flash[:error] = "Sorry, you pin is wrong "
+        redirect_to pin_path
+      end
+    end
+  end
+
+  private
+
+  def login_user!(user)
+    session[:user_id]= user.id
+    flash[:notice]="Welcome, you've logged in."
     redirect_to root_path
   end
 end

@@ -5,7 +5,6 @@ class Category < ActiveRecord::Base;
   validates :name, presence: true, length:{minimum:3, maximum: 10}# uniqueness:true
   before_save :generate_slug!
   sluggable_column :name
-
 end
 
 
